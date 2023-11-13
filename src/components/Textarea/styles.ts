@@ -1,7 +1,7 @@
+import { Platform } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import  {MaterialCommunityIcons}  from '@expo/vector-icons';
- 
+import Feather from 'react-native-vector-icons/Feather';
 
 interface ContainerProps {
   isFocused: boolean;
@@ -15,10 +15,9 @@ interface IconProps {
 
 export const Container = styled.View<ContainerProps>`
   flex-direction: row;
-  align-items: center;
   width: 100%;
-  height: 50px;
-  padding: 0 10px;
+  height: 100px;
+  padding: 10px;
   margin-bottom: 10px;
 
   background-color: ${({ theme }) => theme.colors.inputs};
@@ -40,10 +39,12 @@ export const Container = styled.View<ContainerProps>`
   `}
 `;
 
-export const Icon = styled(MaterialCommunityIcons)<IconProps>`
+export const Icon = styled(Feather)<IconProps>`
   color: ${({ theme }) => theme.colors.grayHard};
-  font-size: 25px;
+  font-size: 24px;
   margin-right: 10px;
+  //top: -55px;
+
 
   ${props =>
     (props.isFocused || props.isFilled) &&
@@ -59,6 +60,8 @@ export const TextInput = styled.TextInput.attrs(({ theme }) => ({
   font-family: 'Ubuntu_500Medium';
   font-size: 16px;
   color: ${({ theme }) => theme.colors.white};
+  padding-top: 3px;
+  ${Platform.OS === 'android' ? 'text-align-vertical: top;' : 'text-align: top;'};
 `;
 
 export const Error = styled.Text`

@@ -1,31 +1,27 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
-import { Dropdown,  } from 'react-native-element-dropdown';
+import { Dropdown, IDropdownRef  } from 'react-native-element-dropdown';
 
-import { useFormContext } from 'react-hook-form';
-import { Container, Icon, Error } from './styles'
-import { useLinkProps } from '@react-navigation/native';
+import { useFormContext, Controller } from 'react-hook-form';
+import { Container, Icon, Error } from './styles';
 
 interface OptionProps {
   value: string;
   label: string;
 }
 
-interface SelectProps extends ViewProps{
+interface SelectProps {
   name: string;
   placeholder: string;
   icon: string;
   options: OptionProps[];
-  error?: string;
-
-  onChange: (item: OptionProps) => void;
-  value: string; 
+  errorMessage?: string;
 }
 
-const Select = ({name, icon, placeholder, options, error, onChange, value }: SelectProps) => {
+const Select = ({name, icon, placeholder, options, errorMessage }: SelectProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
-  const { watch } = useFormContext();
+  const { watch, control, formState } = useFormContext();
   
   const handleSelectFocus = useCallback(() => {
     setIsFocused(true);
@@ -36,35 +32,47 @@ const Select = ({name, icon, placeholder, options, error, onChange, value }: Sel
     setIsFilled(!!watch(name));
   }, []); 
 
+
+  useEffect(() => {
+    // Atualize isFilled com base nas mudanças de valor do formulário
+    setIsFilled(!!watch(name));
+  }, [watch(name)]);
+
   return (
-    <>
-    {error && <Error>{error}</Error>} 
-    
-      <Container isFocused={isFocused} isErrored={!!error}>
-        <Icon isFocused={isFocused} isFilled={isFilled}  name={icon}/>  
-        <View style={styles.container}>
-          <Dropdown 
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            data={options}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={placeholder}
-            searchPlaceholder="Perquisar..."
-            value={value}
-            onChange={onChange}            
-            onFocus={handleSelectFocus}
-            onBlur={handleSelectBlur}
-          />
-        </View>
-      </Container>  
-    
-    </> 
+    <Controller
+      control={control}
+      name={name}
+      rules={{required: errorMessage}}
+      render={({ fieldState:{ error }, field:{ onChange, value } }) => (
+        <>      
+        {error && <Error>{error.message}</Error>}     
+        <Container isFocused={isFocused} isErrored={!!error}>
+          <Icon isFocused={isFocused} isFilled={isFilled} name={icon}/>  
+          <View style={styles.container}>
+            <Dropdown 
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              data={options}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={placeholder}
+              searchPlaceholder="Perquisar..."
+              value={value}              
+              onFocus={handleSelectFocus}
+              onBlur={handleSelectBlur}
+              onChange={onChange}
+            />
+          </View>
+        </Container>  
+        </>
+      )}
+    />        
   );
 };
+
 export default Select;
 
 const styles = StyleSheet.create({

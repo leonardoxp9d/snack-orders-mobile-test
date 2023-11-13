@@ -4,8 +4,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { AuthContext } from '../../contexts/AuthContext';
-import { Input } from '../../components/Input'
-import { Button } from '../../components/Button'
+import { Input } from '../../components/Input';
+import { Button } from '../../components/Button';
 import {
     Container,
     Logo,
@@ -47,7 +47,7 @@ export default function SignIn() {
                         autoCapitalize='none'
                         name="email"
                         icon="email-outline"
-                        error={useFormMethods.formState.errors.email?.message} 
+                        errorMessage="E-mail Obrigatório"
                     /> 
 
                     <Input
@@ -56,11 +56,11 @@ export default function SignIn() {
                         secureTextEntry={true}
                         name="password"
                         icon="lock-outline"
-                        error={useFormMethods.formState.errors.password?.message} 
+                        errorMessage="Senha Obrigatória"
                     /> 
 
                     <Button
-                        title="Acessar"
+                        name="Acessar"
                         loading={!!loadingAuth}
                         onPress={useFormMethods.handleSubmit(handleLogin)}
                     />

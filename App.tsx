@@ -1,3 +1,5 @@
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+
 import { useState, useCallback, useEffect } from 'react';
 import { View, StatusBar, StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,6 +15,7 @@ import {
 import Routes from './src/routes';
 import defaultTheme from './src/styles/theme/default';
 import { AuthProvider } from './src/contexts/AuthContext';
+
 
 
 SplashScreen.preventAutoHideAsync();
@@ -86,18 +89,18 @@ export default function App() {
   }
   
   return (
-      <>
-      <ThemeProvider theme={defaultTheme}>
-          <NavigationContainer >
-            <AuthProvider >
-                <StatusBar backgroundColor="#312e38" barStyle="light-content"/>
-                <View style={{flex: 1}} onLayout={onLayoutRootView}>
-                  <Routes />
-                </View>
-            </AuthProvider>
-          </NavigationContainer>
-      </ThemeProvider>
-      <Toast config={toastConfig}/>
-      </>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider theme={defaultTheme}>
+            <NavigationContainer >
+              <AuthProvider>
+                  <StatusBar backgroundColor="#312e38" barStyle="light-content"/>
+                  <View style={{flex: 1}} onLayout={onLayoutRootView}>
+                    <Routes/>
+                  </View>
+              </AuthProvider>
+            </NavigationContainer>
+        </ThemeProvider>
+        <Toast config={toastConfig}/>
+      </GestureHandlerRootView>
   );
 }

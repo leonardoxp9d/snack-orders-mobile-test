@@ -15,17 +15,16 @@ interface IconProps {
 export const Container = styled.View<ContainerProps>`
   flex-direction: row;
   align-items: center;
-  //justify-content: center;
   width: 100%;
   height: 50px;
-  padding: 0 4px 0 16px;
-  margin-bottom: 15px;
+  padding: 0 4px 0 10px;
+  margin-bottom: 10px;
 
   background-color: ${({ theme }) => theme.colors.inputs};
+  border-color: ${({ theme }) => theme.colors.inputs};
   border-width: 2px;
   border-style: solid;
-  border-color: ${({ theme }) => theme.colors.inputs};
-  border-radius: 10px;
+  border-radius: 15px;
 
   ${props =>
     props.isFocused &&
@@ -67,10 +66,3 @@ export const Error = styled.Text`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.error};
 `;
-
-export const IconError = styled(MaterialCommunityIcons)`
-  margin-left: 10px;
-  font-size: 22px;
-  color: ${({ theme }) => theme.colors.error};
-`;
-

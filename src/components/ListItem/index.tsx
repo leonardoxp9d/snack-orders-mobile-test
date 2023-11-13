@@ -1,51 +1,125 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { TouchableOpacity, ViewProps } from 'react-native';
 
-import { Feather } from '@expo/vector-icons';
+import { useTheme } from 'styled-components';
 
-interface ItemProps {
-    data:{
-        //id: string;
+import {
+    Container, 
+    ImageProduct, 
+    ProductInfo, 
+    ProductMeta, 
+    ProviderMetaText,
+    ImageZoom,
+    Description,
+    ButtonClose,
+    ContainerDescription,
+    ContainerModal,
+    DescriptionTitle,
+    ProductName,
+    Name,
+    Price,
+    ScrollDescription
+} from './styles';
+
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Modal from 'react-native-modal';
+import { formatNumberToCurrency } from '../../utils/format-number-to-currency';
+
+interface ItemProps extends ViewProps {
+    item:{
         product_id: string;
         name: string;
-        amount: string | number;
+        price: number;
+        banner: string;
+        description: string;
+        amount: number;
     }
     index: number;
-    deleteData: (index: number) => void;
+    deleteItem: (index: number) => void;
 }
+export function ListItem({ item, index, deleteItem, ...props }: ItemProps){
+    const theme = useTheme();
+    const [modalVisible, setModalVisible] = useState({});
 
-export function ListItem({ data, index, deleteData }: ItemProps){
-    
     function handleDeleteItem(){
-        deleteData(index);
+        deleteItem(index);
     }
 
     return(
-        <View style={styles.container}>
-            <Text style={styles.item}>{data.amount} - {data.name}</Text>
-      
-            <TouchableOpacity onPress={handleDeleteItem}>
-                <Feather name="trash-2" color="#FF3F4b" size={25} />
+        <>
+        <Container {...props}> 
+            <TouchableOpacity onPress={() => setModalVisible(item)} style={{padding: 10}}>         
+                <ImageProduct
+                    source={{uri:`http://10.0.10.182:3333/files/${item.banner}`}}                
+                />
             </TouchableOpacity>
-        </View>
-    )
-}
 
-const styles = StyleSheet.create({
-    container:{
-        backgroundColor: '#101026',
-        flex:1,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        marginBottom: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        borderRadius: 4,
-        borderWidth: 0.3,
-        borderColor: '#8a8a8a'
-    },
-    item:{
-        color: '#FFF'
-    }
-})
+            <ProductInfo>
+                <ProductName numberOfLines={1} ellipsizeMode="tail">
+                    {item.name}
+                </ProductName>
+
+                <ProductMeta>
+                    <Icon name="cart-arrow-down" size={15} color={theme.colors.primaryColor}/>
+                    <ProviderMetaText numberOfLines={1} ellipsizeMode="tail">
+                        {`Quant.: ${item.amount}`}
+                    </ProviderMetaText>
+                </ProductMeta>
+
+                <ProductMeta>
+                    <Icon name="currency-usd" size={15} color={theme.colors.primaryColor}/>
+                    <ProviderMetaText numberOfLines={1} ellipsizeMode="tail">
+                        {formatNumberToCurrency(item.price * item.amount)}
+                    </ProviderMetaText>
+                </ProductMeta>
+            </ProductInfo>            
+      
+            <TouchableOpacity onPress={handleDeleteItem} style={{padding: 10}}>
+                <Icon name="delete" size={30} color={theme.colors.error} 
+                />
+            </TouchableOpacity>
+
+            
+        </Container>
+
+        <Modal 
+            isVisible={Object.keys(modalVisible).length !== 0}
+            onBackdropPress = {() => setModalVisible({})}                 
+        >
+            <ContainerModal>                                     
+                <ImageZoom
+                    source={{uri:`http://10.0.10.182:3333/files/${item.banner}`}}
+                />
+
+                <ButtonClose onPress={() => setModalVisible({})}>
+                    <Icon 
+                        name="close" 
+                        size={30} 
+                        color={theme.colors.background} 
+                    />
+                </ButtonClose> 
+
+                <Name numberOfLines={1} ellipsizeMode="tail">
+                    {item.name}
+                </Name>
+                
+                <Price numberOfLines={1} ellipsizeMode="tail">
+                    {formatNumberToCurrency(item.price)}
+                </Price>                  
+                
+                <ContainerDescription>
+                    <DescriptionTitle>
+                        Descrição:
+                    </DescriptionTitle>
+                    
+                    <ScrollDescription>
+                        <Description>                            
+                            {`${item.description}`}
+                        </Description>
+                    </ScrollDescription>
+                </ContainerDescription>
+            </ContainerModal>
+        </Modal>
+        </>
+    );
+}
